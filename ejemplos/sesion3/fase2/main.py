@@ -1,6 +1,7 @@
 # main.py
 from app.modelos import Usuario
 
+
 if __name__ == "__main__":
     # Caso feliz
     u = Usuario("Ana", "ANA@Test.com", rol="admin")
@@ -36,7 +37,7 @@ if __name__ == "__main__":
 
 
 # app/modelos.py
-from __future__ import annotations
+# from __future__ import annotations
 from abc import ABC, abstractmethod
 
 # --- Base abstracta ---
@@ -48,6 +49,9 @@ class BaseUsuario(ABC):
 
     def tiene_permiso(self, permiso: str) -> bool:
         return permiso in self.permisos()
+    @classmethod
+    def get():
+        return []
 
 # --- Usuario (de Fase 2) HEREDA de BaseUsuario ---
 class Usuario(BaseUsuario):
@@ -121,7 +125,16 @@ class Usuario(BaseUsuario):
             activo=bool(datos.get("activo", True)),
         )
 
-    # Permisos por defecto del rol "usuario"
+    # Permisos por defecto del rol "u# --- Base abstracta ---
+class BaseUsuario(ABC):
+    @abstractmethod
+    def permisos(self) -> list[str]:
+        """Lista de permisos concedidos al usuario."""
+        ...
+
+    def tiene_permiso(self, permiso: str) -> bool:
+        return permiso in self.permisos()
+
     def permisos(self) -> list[str]:
         return ["ver"]
 
@@ -147,5 +160,13 @@ class Invitado(Usuario):
 
 
 Usuario.desde_dict()
-Admin.desde_dict()
+# Admin.desde_dict()
 Invitado.desde_dict()
+
+
+
+Usuario.get()
+
+Admin.get()
+
+Invitado.get()

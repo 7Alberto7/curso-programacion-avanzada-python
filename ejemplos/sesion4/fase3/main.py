@@ -1,13 +1,42 @@
 # main.py
-from app.modelos import AdminConLogger, Moderador
+import argparse
+from app.modelos import  Usuario
 
 if __name__ == "__main__":
-    a = AdminConLogger("Root", "root@corp.com")
-    print(a.presentarse())           # debería loguear la llamada
-    a.activar()                      # logs antes y después gracias al mixin
+    # a = AdminFull("Root", "root@corp.com")
+    # print(a.presentarse())           # debería loguear la llamada
+    # a.activar()
 
-    m = Moderador("Lucía", "lucia@test.com", nivel=2, activo=False)
-    print(m)                         # [MODERADOR-N2] ...
-    m.activar()                      # (no loguea, no hereda del mixin)
 
-    print("MRO AdminConLogger:", AdminConLogger.mro())
+    # a.enviar_email('hola','mensaje')                      # logs antes y después gracias al mixin
+
+    # print("MRO AdminConLogger:", AdminConLogger.mro())
+
+
+    m = Usuario("Root", "root@corp.com")
+
+    m.activar()
+
+    # m.log_evento('efasfa')
+    
+
+    # m.enviar_email('gsdgsd','gsdgsdg')
+
+    # m.log_evento()
+    # m.auditar('un evento')
+    # m.auditar('otro evento')
+    # m.auditar('tercer evento')
+
+
+    # m.observar()
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("nombre", help="Nombre del usuario")
+    args = parser.parse_args()
+
+    u = Usuario(args.nombre,'asda@dasdas.es')
+    print("Usuario creado:", u)
+
+if __name__ == "__main__":
+    main()
