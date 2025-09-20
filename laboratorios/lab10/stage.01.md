@@ -206,3 +206,30 @@ python -m app.sql_demo
 * El uso de `with closing(connect()) as conn, conn:` asegura **commit/rollback** automático.
 * `row_factory = sqlite3.Row` permite acceder por nombre de columna (`row["cliente"]`).
 * Para MySQL en lugar de SQLite, migrar a **SQLAlchemy** con un `engine` `mysql+pymysql://…` (opcional).
+
+
+## ✅ Retos 
+
+### 🧩 Reto 1 — Validación de duplicados
+
+> **Añade una función `existe_cliente(email: str) → bool` que devuelva si ya existe un cliente con ese email.**
+> Úsala antes de llamar a `create_cliente` para evitar insertar duplicados manualmente.
+
+🔍 Objetivo: aplicar una consulta `SELECT` con `WHERE` y reforzar la idea de restricciones únicas.
+
+---
+
+### 🧩 Reto 2 — Consulta: top ventas por cliente
+
+> **Crea una función `ventas_totales_por_cliente() → list[Row]` que devuelva el total facturado por cada cliente, ordenado de mayor a menor.**
+
+🔍 Objetivo: practicar `GROUP BY`, `SUM`, y consolidar el uso de joins + agregaciones.
+
+---
+
+### 🧩 Reto 3 — Alta de venta
+
+> **Crea una función `registrar_venta(id_cliente: int, id_producto: int, cantidad: int)` que inserte una nueva fila en la tabla `ventas`.**
+> Valida que el cliente y producto existen antes de insertar.
+
+🔍 Objetivo: trabajar el flujo de inserción condicional con foreign keys y reforzar validación previa.
