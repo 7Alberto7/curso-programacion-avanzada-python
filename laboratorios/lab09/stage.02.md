@@ -113,8 +113,73 @@ data/organizado/
 
 ---
 
-## 🔥 Retos opcionales
+Perfecto, la **Fase 2** está clara y bien diseñada. Vamos a revisar y quedarnos con **solo 3 retos**, como acordamos, manteniendo:
 
-1. **Cierre de mes**: añade subcarpetas por **día** (`YYYY-MM/DD`).
-2. **Limpieza**: borra carpetas de tipo vacías tras la operación.
-3. **CLI**: añade flags `--by day|month` y `--dry-run` para simular sin mover realmente (imprimiría qué haría).
+* Claridad y brevedad
+* Progresión lógica
+* Alineación con los objetivos de la sesión 9.2
+* Aplicación directa sobre el scaffold
+
+---
+
+
+
+## 🔁 Retos 
+
+---
+
+### 🔸 Reto 1 — Organiza los archivos por fecha de modificación
+
+**🎯 Objetivo:**
+Dentro de cada carpeta de tipo, agrupa los archivos por subcarpeta `YYYY-MM`.
+
+🔧 **Qué hacer:**
+
+* Usa `archivo.stat().st_mtime` para obtener la fecha de modificación.
+* Convierte a formato `YYYY-MM` con `datetime.fromtimestamp()`.
+* Crea subcarpetas por mes y mueve allí los archivos.
+
+🧠 **Qué se trabaja:**
+
+* Manipulación de fechas en base a timestamps.
+* Agrupación de ficheros en estructuras cronológicas.
+* Uso combinado de `Path`, `datetime`, `shutil`.
+
+---
+
+### 🔸 Reto 2 — Ignora archivos que ya están en carpetas `YYYY-MM`
+
+**🎯 Objetivo:**
+Evitar reordenar archivos que ya han sido movidos correctamente.
+
+🔧 **Qué hacer:**
+
+* Antes de mover un archivo, comprueba si su **padre ya es una carpeta tipo `YYYY-MM`** (suficiente con ver si el nombre coincide con el patrón `20XX-XX`).
+* Si ya está allí, **sáltalo**.
+
+🧠 **Qué se trabaja:**
+
+* Validación previa al movimiento para evitar duplicidad o errores.
+* Escritura de scripts **idempotentes** (pueden ejecutarse varias veces sin alterar el resultado).
+
+---
+
+### 🔸 Reto 3 — Borra carpetas de tipo que hayan quedado vacías
+
+**🎯 Objetivo:**
+Limpiar la estructura de carpetas para que solo queden las subcarpetas `YYYY-MM`.
+
+🔧 **Qué hacer:**
+
+* Tras mover todos los archivos, comprueba si cada carpeta de tipo está vacía.
+* Si lo está, bórrala con `.rmdir()`.
+
+```python
+if not any(carpeta_tipo.iterdir()):
+    carpeta_tipo.rmdir()
+```
+
+🧠 **Qué se trabaja:**
+
+* Limpieza estructural post-operación.
+* Gestión cuidadosa del sistema de ficheros para evitar errores.
