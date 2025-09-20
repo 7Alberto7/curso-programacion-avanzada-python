@@ -182,11 +182,4 @@ if __name__ == "__main__":
 * ¿Qué riesgos tiene usar Pickle frente a JSON/XML?
 * ¿Qué formatos elegirías para **backup local** vs **intercambio con otras aplicaciones**?
 
----
 
-## 🔥 Retos opcionales
-
-1. Implementa la opción de **CSV** además de JSON/XML/Pickle.
-2. Haz que `organizar_por_tipo` ignore archivos ocultos (`.gitignore`, `.DS_Store`).
-3. Añade un **menú interactivo en CLI** (argparse) para elegir fase.
-4. Escribe un test `unittest` que valide que los datos tras JSON ⇄ XML son equivalentes.
