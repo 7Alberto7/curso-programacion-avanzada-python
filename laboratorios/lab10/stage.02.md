@@ -182,3 +182,30 @@ python -m app.mongo_demo
   clientes.create_index("email", unique=True)
   ```
 * Para tests reproducibles, `seed()` siempre limpia y repuebla.
+
+
+
+## ✅ Reto 1 — ¿Existe cliente por email?
+
+> Crea una función `existe_cliente(email: str) -> bool` que devuelva `True` si hay un cliente con ese email.
+
+🎯 **Objetivo didáctico:** usar `find_one()` con filtros, aprender a validar existencia sin traer todos los datos.
+
+---
+
+## ✅ Reto 2 — Importes totales por cliente
+
+> Crea una función `totales_por_cliente() -> list[dict]` que devuelva cliente + total facturado (usando `aggregate`).
+
+🎯 **Objetivo didáctico:** usar `$lookup`, `$group` y `$sum` para calcular el importe total por cliente, sin detalles por producto.
+
+---
+
+## ✅ Reto 3 — Insertar venta validando IDs
+
+> Crea una función `insertar_venta(id_cliente, id_producto, cantidad)` que:
+>
+> * compruebe que existen cliente y producto,
+> * y si es así, inserte la venta.
+
+🎯 **Objetivo didáctico:** combinar validación previa (`find_one()`) con `insert_one()`, y reforzar la lógica defensiva.
