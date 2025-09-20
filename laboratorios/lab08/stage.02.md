@@ -89,10 +89,85 @@ Fase 2 (con lock) → contador: 400000  (esperado: 400000)
 * El resultado final **coincide** con `N_PROCESOS * N_ITER` en **todas** las ejecuciones.
 * El incremento está protegido con `with lock:` (exclusión mutua real).
 
+
+
+## 🔁 Retos · Fase 2
+
+> 🎯 Objetivo global: Garantizar la **consistencia de los datos compartidos** usando `multiprocessing.Lock`
+> 💡 En esta fase **evitamos por completo** la condición de carrera.
+
 ---
 
-## 🔥 Retos (opcionales)
+### 🔸 Reto 1 — ¿Funciona el Lock? Verifica el resultado exacto
 
-1. **Benchmark**: mide el tiempo de Fase 1 vs Fase 2 (`time.perf_counter()`); comenta la diferencia (el lock añade coste, pero garantiza consistencia).
-2. **Grano fino**: intenta reducir la sección crítica (p. ej., acumular en una variable local y escribir cada K iteraciones bajo lock) y compara rendimiento.
-3. **Stress**: sube a `N_PROCESOS = 16` y `N_ITER = 1_000_000` para observar el impacto en rendimiento y ver que la exactitud se mantiene.
+**🎯 Objetivo:** Usar `Lock` correctamente para obtener **exactamente** el valor esperado en todas las ejecuciones.
+
+🔧 **Qué hacer:**
+
+* En `main.py`, crea un `Lock()` y pásalo a todos los procesos.
+* Asegúrate de proteger la suma con `with lock:` en la función `incrementar`.
+
+```python
+with lock:
+    contador.value += 1
+```
+
+🧠 **Qué aprendo:**
+
+* Que `Lock` fuerza la **exclusión mutua**: solo un proceso accede al recurso compartido a la vez.
+* Que el resultado deja de ser aleatorio y se vuelve **confiable**.
+
+---
+
+### 🔸 Reto 2 — ¿Cuánto cuesta el Lock? Mide el tiempo
+
+**🎯 Objetivo:** Comparar el rendimiento de la ejecución **con y sin lock**.
+
+🔧 **Qué hacer:**
+
+* Usa `time.perf_counter()` alrededor de `fase2_contador_con_lock()` para medir duración.
+* Compara con el tiempo medido en la Fase 1 (sin lock).
+
+```python
+inicio = perf_counter()
+fase2_contador_con_lock()
+fin = perf_counter()
+print(f"⏱️ Duración con lock: {fin - inicio:.4f} segundos")
+```
+
+🧠 **Qué aprendo:**
+
+* Que usar `Lock` introduce una penalización en rendimiento…
+* …pero lo **compensa al asegurar la precisión del resultado**.
+
+---
+
+### 🔸 Reto 3 — ¿Qué pasa si optimizas la sección crítica?
+
+**🎯 Objetivo:** Reducir el impacto del `Lock` acotando mejor la sección crítica.
+
+🔧 **Qué hacer:**
+
+* Cambia la función `incrementar` para que:
+
+  * Acumule en una variable local (`local_sum`)
+  * Solo actualice `contador.value` **una vez cada 1000 iteraciones** (dentro del `lock`)
+
+```python
+local_sum = 0
+for i in range(n_iter):
+    local_sum += 1
+    if i % 1000 == 0:
+        with lock:
+            contador.value += local_sum
+            local_sum = 0
+# Al final del bucle, escribe lo que quede:
+if local_sum:
+    with lock:
+        contador.value += local_sum
+```
+
+🧠 **Qué aprendo:**
+
+* Que reducir la sección crítica mejora el rendimiento.
+* Que podemos mantener la exactitud **optimizando** cómo usamos el `Lock`.
