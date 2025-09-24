@@ -158,11 +158,3 @@ En `log.txt` deberías ver 5 líneas correctas y completas, sin solapamientos.
 3. ¿Qué efecto tendría eliminar el `lock` en la escritura concurrente a archivo?
 4. ¿Por qué un archivo también es considerado recurso compartido?
 
----
-
-## 🔥 Retos opcionales
-
-1. **Array compartido:** usa `multiprocessing.Array('i', [0,0,0])` para que cada proceso incremente un índice distinto.
-2. **Stress test:** lanza 20 procesos de incremento y compara rendimiento con y sin lock.
-3. **Logging avanzado:** implementa un logger multiproceso que escriba timestamp + PID en cada línea.
-4. **Deadlock simulado:** crea dos locks y dos procesos que intenten adquirirlos en orden distinto → analiza qué ocurre.

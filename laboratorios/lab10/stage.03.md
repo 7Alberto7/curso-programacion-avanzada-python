@@ -1,7 +1,3 @@
-¡Perfecto! Aquí tienes la **Fase 3** del **Lab 10 — ETL con Pandas** y la **conclusión** del laboratorio.
-
----
-
 # 🔹 Fase 3 — ETL con Pandas (lectura, joins, agregaciones)
 
 ### 🎯 Objetivo
@@ -135,4 +131,40 @@ Unidades por producto:
 * Se crean **tres CSVs** (`clientes.csv`, `productos.csv`, `ventas.csv`) en `data/export/`.
 * El DataFrame final contiene las columnas: `nombre` (cliente), `producto`, `cantidad`, `precio`, `importe`.
 * Se generan **dos reportes** CSV: `reporte_importe_por_cliente.csv` y `reporte_unidades_por_producto.csv`.
+
+
+## ✅ Reto 1 — ¿Qué productos compró un cliente?
+
+**Enunciado:**
+
+> Crea una función `productos_por_cliente(nombre_cliente: str) -> list[str]` que devuelva una lista con los nombres de productos comprados por ese cliente.
+
+* 🔍 Aplica filtro sobre la columna `nombre`.
+* 📦 Extrae los valores únicos de `producto`.
+
+---
+
+## ✅ Reto 2 — Clientes que compraron más de X €
+
+**Enunciado:**
+
+> Crea una función `clientes_con_gasto_minimo(min_importe: float) -> pd.DataFrame` que devuelva los clientes cuyo gasto total supere ese umbral.
+
+* 🧮 Usa el DataFrame `df` unido.
+* 🔁 Apóyate en `groupby` y `sum`.
+* 🎯 Devuelve nombre y total gastado.
+
+---
+
+## ✅ Reto 3 — Añadir columna "caro/barato"
+
+**Enunciado:**
+
+> Añade una columna `segmento_precio` al DataFrame que indique `"caro"` si el producto cuesta ≥ 200 €, y `"barato"` en caso contrario.
+
+* 🟰 Crea una función `etiquetar_segmento(df: pd.DataFrame) -> pd.DataFrame`.
+* 🧠 Usa `np.where()` o `apply()`.
+
+
+
 

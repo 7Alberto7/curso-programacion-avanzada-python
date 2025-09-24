@@ -160,14 +160,39 @@ JSON ⇄ XML equivalentes (normalizado): True
 * Las cargas desde cada formato reconstruyen el dataset original (teniendo en cuenta la **normalización** para XML).
 * Se imprime el estado de **equivalencia** entre formatos.
 
+
+
+## ✅ Retos
+
+### 🔸 Reto 1 — Normaliza booleanos XML → Python
+
+**Objetivo:**
+Extiende `normalizar_tipos` para que convierta `"true"` y `"false"` (como cadenas) en los booleanos `True` y `False` cuando sea posible.
+
+> Esto te enseña a manejar casos típicos donde el tipo real se pierde durante la serialización, como ocurre con XML.
+
 ---
 
-## 🔥 Retos opcionales
+### 🔸 Reto 2 — Añade campo de fecha y conviértelo
 
-1. **Tipos booleanos en XML**: extiende `normalizar_tipos` para convertir `"true"/"false"` a `True/False`.
-2. **Fechas**: añade un campo fecha (`"2025-09-05"`) y normalízalo a `datetime.date`.
-3. **CSV**: incorpora lectura/escritura CSV y conversión CSV ⇄ JSON.
-4. **CLI**: añade `argparse` con subcomandos `convert --from json --to xml --in path --out path`.
+**Objetivo:**
+Agrega un campo `"fecha_registro"` al dataset con valores tipo `"2025-09-20"`, y adapta `normalizar_tipos` para convertirlo en `datetime.date`.
+
+> Este reto es útil para validar fechas, usar formatos ISO y convertir correctamente cadenas a objetos `datetime.date`.
+
+---
+
+### 🔸 Reto 3 — Soporta CSV y convierte a JSON
+
+**Objetivo:**
+Agrega soporte básico para CSV:
+
+* Guardar lista de diccionarios a `.csv`
+* Leer desde `.csv` a lista de diccionarios
+* Permitir conversión CSV ⇄ JSON
+
+> Ideal para entender el formato más común en exportaciones de datos y cómo convertir entre texto tabular ↔ estructuras jerárquicas.
+
 
 ---
 

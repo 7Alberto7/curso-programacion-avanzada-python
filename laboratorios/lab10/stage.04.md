@@ -131,6 +131,36 @@ Predicción para cantidad=10 → 270.00
 
 ---
 
+## ✅ Reto 1 — Clasificación binaria con distinto umbral
+
+**Enunciado:**
+
+> Ajusta el modelo de clasificación para que el umbral de importe se considere “alto” si supera los **300 €** en lugar de 200 €. ¿Qué ocurre con la precisión (accuracy)?
+
+🎯 *Foco:* Entender cómo cambia la variable objetivo (`y`) al modificar la definición del problema.
+
+---
+
+## ✅ Reto 2 — ¿Cuál es el impacto de normalizar?
+
+**Enunciado:**
+
+> Ejecuta la regresión lineal con y sin normalizar la variable independiente (`cantidad`). ¿Cambian los coeficientes o el R²?
+
+🎯 *Foco:* Aprender cuándo el escalado afecta al modelo y por qué es relevante en distintos algoritmos.
+
+---
+
+## ✅ Reto 3 — Predice el precio de una cantidad no vista
+
+**Enunciado:**
+
+> Usa el modelo de regresión para predecir el precio esperado si alguien compra **12 unidades**. Interpreta si el resultado tiene sentido.
+
+🎯 *Foco:* Aplicar el modelo a nuevas entradas y reflexionar sobre su generalización.
+
+
+
 # ✅ Conclusión global del Laboratorio 10
 
 **Qué has hecho:**

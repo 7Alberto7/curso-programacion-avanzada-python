@@ -86,10 +86,67 @@ Fase 1 (sin lock) → contador: 271893  (esperado: 400000)
 * El resultado final es **inferior** al esperado (`400000`) en la mayoría de ejecuciones.
 * No se usa ningún `Lock` ni mecanismo de sincronización.
 
+
 ---
 
-## 🔥 Reto (opcional)
+## 🔁 Retos 
 
-1. **Aumenta la contención:** sube `n_iter` a `1_000_000` o lanza **8 procesos** para hacer el fallo más evidente.
-2. **Tiempos:** mide el tiempo total de ejecución (con `time.perf_counter()`) para comparar luego con la Fase 2.
-3. **Tipos:** prueba con `Value('l', 0)` (long) y observa que el problema sigue existiendo.
+---
+
+🔸 **Reto 1 — Observa cómo falla un contador sin protección**
+**🎯 Objetivo:** Ver que el resultado final es incorrecto al no usar `Lock`.
+
+🔧 **Qué hacer:**
+
+* Ejecuta la función `fase1_contador_sin_lock()` que lanza 4 procesos, cada uno sumando 100.000 al mismo `multiprocessing.Value`.
+* Comprueba que el resultado final **casi nunca** es 400.000.
+
+```python
+print(f"Fase 1 (sin lock) → contador: {contador.value} (esperado: 400000)")
+```
+
+🧠 **Qué aprendo:**
+
+* Qué es una condición de carrera: varios procesos acceden y modifican la misma variable sin coordinación.
+* Que este tipo de errores **no lanzan excepciones**, pero invalidan los resultados.
+
+---
+
+🔸 **Reto 2 — Provoca más fallos aumentando la presión**
+**🎯 Objetivo:** Aumentar la probabilidad de que ocurra el error modificando la carga o el número de procesos.
+
+🔧 **Qué hacer:**
+
+* Cambia `n_iter` a 1\_000\_000 en la función `incrementar`.
+* O aumenta a 8 procesos en lugar de 4.
+
+```python
+procesos = [Process(target=incrementar_sin_lock, args=(contador,)) for _ in range(8)]
+```
+
+🧠 **Qué aprendo:**
+
+* Que las condiciones de carrera son más frecuentes cuando hay **más procesos o iteraciones**.
+* Que el problema no se resuelve “por suerte”: siempre está presente, aunque no siempre visible.
+
+---
+
+🔸 **Reto 3 — Mide el tiempo total sin Lock (baseline de rendimiento)**
+**🎯 Objetivo:** Registrar cuánto tarda la versión sin `Lock` para compararlo luego con la versión sincronizada.
+
+🔧 **Qué hacer:**
+
+* Usa `time.perf_counter()` para medir cuánto dura `fase1_contador_sin_lock()`:
+
+```python
+from time import perf_counter
+inicio = perf_counter()
+fase1_contador_sin_lock()
+fin = perf_counter()
+print(f"⏱️ Duración sin lock: {fin - inicio:.4f} segundos")
+```
+
+🧠 **Qué aprendo:**
+
+* Que la falta de sincronización puede ser rápida… pero **insegura**.
+* Que la sincronización con `Lock` **aumenta la seguridad a costa de algo de rendimiento** (lo veremos en la Fase 2).

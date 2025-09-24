@@ -1,48 +1,115 @@
-# 🩹 Parche 1 — Importar ABC y declarar base abstracta
+# ✅ Resolución paso a paso
 
-**En `app/modelos.py` (cabecera del módulo):**
+---
+
+## 🔹 Reto 1 — Confirmar que `BaseUsuario` es abstracta
+
+### 🎯 Objetivo:
+
+Demostrar que **no se puede instanciar** directamente una clase abstracta.
+
+---
+
+### 1. Asegúrate de que `BaseUsuario` hereda de `ABC` y tiene al menos un `@abstractmethod`:
 
 ```python
-from __future__ import annotations
 from abc import ABC, abstractmethod
-```
 
-**Debajo de los imports (antes de `Usuario`):**
-
-```python
 class BaseUsuario(ABC):
     @abstractmethod
     def permisos(self) -> list[str]:
         ...
-
-    def tiene_permiso(self, permiso: str) -> bool:
-        return permiso in self.permisos()
 ```
 
 ---
 
-# 🩹 Parche 2 — `Usuario` hereda de `BaseUsuario` e implementa permisos
-
-**Cambia la firma de clase:**
+### 2. En `main.py`, añade este bloque:
 
 ```python
-class Usuario(BaseUsuario):
+from app.modelos import BaseUsuario
+
+try:
+    b = BaseUsuario()
+except TypeError as e:
+    print("Instancia bloqueada correctamente:", e)
 ```
 
-**Añade al final de la clase `Usuario` (método concreto):**
+---
+
+### ✅ Resultado esperado:
+
+Al ejecutar `python main.py`, deberías ver algo como:
+
+```
+Instancia bloqueada correctamente: Can't instantiate abstract class BaseUsuario with abstract method permisos
+```
+
+---
+
+## 🔹 Reto 2 — Verificar los permisos por rol
+
+### 🎯 Objetivo:
+
+Comparar los métodos `permisos()` y `tiene_permiso()` según el tipo de usuario.
+
+---
+
+### 1. Asegúrate de que las subclases sobrescriben correctamente `permisos()`:
+
+```python
+class Admin(Usuario):
+    def permisos(self) -> list[str]:
+        return ["ver", "crear", "editar", "borrar"]
+
+class Invitado(Usuario):
+    def permisos(self) -> list[str]:
+        return ["ver"]
+```
+
+La clase `Usuario` ya define:
 
 ```python
 def permisos(self) -> list[str]:
     return ["ver"]
 ```
 
-> Con esto `Usuario` cumple el contrato abstracto.
+---
+
+### 2. En `main.py`, añade:
+
+```python
+from app.modelos import Usuario, Admin, Invitado
+
+a = Admin("Root", "root@corp.com")
+i = Invitado("Visitante", "visitante@mail.com")
+u = Usuario("Ana", "ana@mail.com")
+
+print("Admin:", a.permisos(), a.tiene_permiso("borrar"))     # True
+print("Invitado:", i.permisos(), i.tiene_permiso("borrar"))  # False
+print("Usuario:", u.permisos(), u.tiene_permiso("ver"))      # True
+```
 
 ---
 
-# 🩹 Parche 3 — Subclases por rol
+### ✅ Resultado esperado:
 
-**Añade debajo de `Usuario`:**
+```
+Admin: ['ver', 'crear', 'editar', 'borrar'] True
+Invitado: ['ver'] False
+Usuario: ['ver'] True
+```
+
+---
+
+## 🔹 Reto 3 — Personalizar `__str__` para `Admin`
+
+### 🎯 Objetivo:
+
+Redefinir el método `__str__()` para una subclase y conservar lo del padre.
+
+---
+
+### 1. Modifica `Admin` en `modelos.py`:
 
 ```python
 class Admin(Usuario):
@@ -52,84 +119,36 @@ class Admin(Usuario):
     def permisos(self) -> list[str]:
         return ["ver", "crear", "editar", "borrar"]
 
-
-class Invitado(Usuario):
-    def __init__(self, nombre: str, email: str, activo: bool = True):
-        super().__init__(nombre, email, rol="invitado", activo=activo)
-
-    def permisos(self) -> list[str]:
-        return ["ver"]
-
     def __str__(self) -> str:
-        return f"[INVITADO] {super().__str__()}"
+        return f"[ADMIN] {super().__str__()}"
+```
+
+> Ya se está usando `__str__()` en `Usuario`, así que reutilizamos la salida.
+
+---
+
+### 2. En `main.py`, añade:
+
+```python
+print(a)  # objeto de tipo Admin
 ```
 
 ---
 
-# 🧪 Checks exprés (añade 5–7 líneas a `main.py`)
+### ✅ Resultado esperado:
 
-```python
-from app.modelos import BaseUsuario, Usuario, Admin, Invitado
-
-a = Admin("Root", "root@corp.com")
-g = Invitado("Guest", "guest@mail.org")
-u = Usuario("Ana", "ana@test.com")
-
-print(a.tiene_permiso("borrar"))  # True
-print(g.tiene_permiso("borrar"))  # False
-print(u.permisos())               # ["ver"]
-
-try:
-    BaseUsuario()  # debe fallar (abstracta)
-except TypeError as e:
-    print("Abstracta OK:", e)
+```
+[ADMIN] Root <root@corp.com> (admin) [activo]
 ```
 
 ---
 
-## (Opcional) 🩹 Parche 4 — Repositorio en memoria
+## ✅ Conclusión
 
-**Crear `app/repositorio.py` con lo mínimo:**
+Con estos tres retos resueltos, los alumnos comprenden de forma clara:
 
-```python
-from typing import Callable, Optional
-from .modelos import Usuario
-
-class RepositorioUsuarios:
-    def __init__(self):
-        self._por_email: dict[str, Usuario] = {}
-
-    def agregar(self, u: Usuario):
-        k = u.email
-        if k in self._por_email:
-            raise ValueError(f"Ya existe usuario con email {k}")
-        self._por_email[k] = u
-
-    def obtener_por_email(self, email: str) -> Optional[Usuario]:
-        return self._por_email.get((email or "").strip().lower())
-
-    def listar_activos(self) -> list[Usuario]:
-        return [u for u in self._por_email.values() if u.activo]
-
-    def eliminar(self, email: str):
-        self._por_email.pop((email or "").strip().lower(), None)
-
-    def buscar(self, predicado: Callable[[Usuario], bool]) -> list[Usuario]:
-        return [u for u in self._por_email.values() if predicado(u)]
-```
-
-**Test opcional en `main.py` (3 líneas):**
-
-```python
-from app.repositorio import RepositorioUsuarios
-repo = RepositorioUsuarios(); repo.agregar(u); print(len(repo.listar_activos()))
-```
-
----
-
-### ✅ Validación rápida
-
-* `Admin(...).tiene_permiso("borrar") → True`; `Invitado(...).tiene_permiso("borrar") → False`.
-* Instanciar `BaseUsuario()` → `TypeError`.
-* `Usuario(...).permisos() → ["ver"]`.
-* (Repo) Duplicar email → `ValueError`; `listar_activos()` excluye desactivados.
+| Concepto            | Aprendido a través de…                    |
+| ------------------- | ----------------------------------------- |
+| Abstracción         | Clase `BaseUsuario` y error al instanciar |
+| Herencia funcional  | `.permisos()` personalizado en subclases  |
+| Polimorfismo visual | `__str__()` específico para `Admin`       |

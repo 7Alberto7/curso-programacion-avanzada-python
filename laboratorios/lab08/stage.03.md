@@ -141,13 +141,66 @@ python main.py
 * El fichero “con lock” contiene **exactamente** `N_PROCESOS * N_LINEAS_POR_PROCESO` líneas, cada una completa.
 * El fichero “sin lock” puede evidenciar desorden/mezcla bajo alta contención.
 
+
+## 🔁 Retos · 
+> 🎯 Objetivo global: Comprobar que los archivos también son **recursos compartidos**, y que **la escritura concurrente sin sincronización puede fallar** silenciosamente.
+
 ---
 
-## 🔥 Retos (opcionales)
+### 🔸 Reto 1 — ¿Qué pasa cuando escribes sin Lock?
 
-1. **Verificación automática:** escribe un script que valide que cada proceso generó exactamente sus `L0000…L(N-1)` líneas en “con lock” y detecte huecos/errores en “sin lock”.
-2. **Benchmark:** mide tiempo total de ambos modos para cuantificar el coste del lock.
-3. **Queue en lugar de Lock:** envía mensajes a un proceso escritor único mediante `multiprocessing.Queue` y compáralo con el enfoque de Lock.
+**🎯 Objetivo:** Observar qué ocurre cuando varios procesos escriben al mismo archivo sin coordinación.
+
+🔧 **Qué hacer:**
+
+* Ejecuta `demo_log_sin_lock()` desde `main.py`.
+* Examina el archivo `log_sin_lock.txt` al finalizar.
+* Busca líneas **truncadas, entremezcladas o con símbolos corruptos**.
+
+🧠 **Qué aprendo:**
+
+* Que un archivo es un recurso compartido como cualquier otro.
+* Que sin exclusión mutua, incluso algo “simple” como `f.write()` puede fallar.
+
+---
+
+### 🔸 Reto 2 — ¿Y si usamos Lock?
+
+**🎯 Objetivo:** Usar `Lock` para garantizar que las líneas en el archivo estén completas y bien formateadas.
+
+🔧 **Qué hacer:**
+
+* Ejecuta `demo_log_con_lock()` en `main.py`.
+* Examina `log_con_lock.txt` y confirma que **todas las líneas** están completas y con el formato `PXX LXXXX`.
+* Verifica que el número total de líneas coincide con `N_PROCESOS × N_LINEAS_POR_PROCESO`.
+
+🧠 **Qué aprendo:**
+
+* Que `Lock` también protege operaciones de escritura a disco.
+* Que la protección debe envolver **todo el bloque de escritura**, no solo la llamada a `write()`.
+
+---
+
+### 🔸 Reto 3 — ¿Y si en lugar de Lock usamos un escritor central?
+
+**🎯 Objetivo:** Usar una `Queue` para enviar mensajes desde múltiples procesos a un **único proceso escritor**.
+
+🔧 **Qué hacer (esbozo):**
+
+* Crea una `Queue()` compartida.
+* Cada proceso pone sus mensajes en la cola.
+* Lanza un proceso adicional que lea de la cola y escriba en `log_queue.txt`.
+
+📌 *Tips*:
+
+* Usa `q.put(None)` para indicar “fin” de escritura por parte de cada proceso.
+* El escritor debe terminar cuando reciba N señales de finalización.
+
+🧠 **Qué aprendo:**
+
+* Que `Queue` permite **comunicación segura sin necesidad de Lock**.
+* Que separar productores de consumidores simplifica la sincronización.
+
 
 ---
 

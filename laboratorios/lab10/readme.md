@@ -368,9 +368,3 @@ if __name__ == "__main__":
 
 ---
 
-## 🔥 Retos opcionales
-
-1. **Persistencia cruzada**: exporta desde Mongo a JSON y vuelve a cargarlo en SQLite.
-2. **ORM**: rehaz la Fase 1 con **SQLAlchemy** y relaciones declarativas.
-3. **Validación de ML**: usa **KFold** y compara modelos (LogReg vs Árbol de decisión).
-4. **CLI**: crea un `main.py` con subcomandos (`sql seed`, `mongo seed`, `etl`, `ml`) usando `argparse`.

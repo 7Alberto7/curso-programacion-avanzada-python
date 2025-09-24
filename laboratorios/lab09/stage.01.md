@@ -103,10 +103,58 @@ data/organizado/
    └─ script.py
 ```
 
+
+## 🔁 Retos
+
 ---
 
-## 🔥 Retos opcionales
+### 🔸 Reto 1 — Clasifica archivos por extensión
 
-1. Crear una carpeta **otros/** para archivos sin extensión.
-2. Hacer que ignore archivos ocultos (los que empiezan por `.`).
-3. Convertir el script en una función CLI con `argparse` que reciba rutas `--src` y `--dst`.
+**🎯 Objetivo:** Mover los archivos a carpetas nombradas según su tipo (extensión).
+
+🔧 **Qué hacer:**
+
+* Recorre `data/entrada/`.
+* Detecta la extensión del archivo (`Path.suffix`).
+* Crea una subcarpeta en `data/organizado/{extensión}`.
+* Mueve el archivo a su carpeta correspondiente.
+
+🧠 **Qué aprendo:**
+
+* A trabajar con rutas (`Path`).
+* A usar `shutil.move()` para reorganizar archivos por tipo.
+
+---
+
+### 🔸 Reto 2 — Maneja archivos sin extensión
+
+**🎯 Objetivo:** Detectar archivos sin extensión y organizarlos correctamente.
+
+🔧 **Qué hacer:**
+
+* Si un archivo no tiene extensión (`archivo.suffix == ""`), colócalo en la subcarpeta `otros/`.
+
+🧠 **Qué aprendo:**
+
+* A cubrir casos especiales y prevenir errores.
+* A hacer el script más robusto.
+
+---
+
+### 🔸 Reto 3 — Ignora archivos ocultos
+
+**🎯 Objetivo:** Evitar mover archivos que empiezan por `"."` (como `.DS_Store`, `.gitkeep`, etc.).
+
+🔧 **Qué hacer:**
+
+* Añade una condición que descarte archivos cuyo nombre comienza con `"."`.
+
+```python
+if archivo.name.startswith("."):
+    continue
+```
+
+🧠 **Qué aprendo:**
+
+* A evitar errores molestos por archivos ocultos del sistema o de Git.
+* A filtrar adecuadamente archivos que no deben procesarse.
